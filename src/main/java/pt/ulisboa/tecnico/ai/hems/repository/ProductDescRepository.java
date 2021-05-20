@@ -13,4 +13,6 @@ public interface ProductDescRepository extends JpaRepository<ProductDesc, Long> 
 	
 	public List<ProductDesc> findByType(ProductType type);
 
+	public ProductDesc findByDescription(String desc);
+
 }

@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.ai.hems.service.impl;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,13 +10,13 @@ import org.springframework.stereotype.Service;
 
 import lombok.extern.java.Log;
 import pt.ulisboa.tecnico.ai.hems.enums.InputOutput;
+import pt.ulisboa.tecnico.ai.hems.enums.PowerSourceType;
 import pt.ulisboa.tecnico.ai.hems.ext.PowerSourceInfo;
 import pt.ulisboa.tecnico.ai.hems.model.PowerSource;
 import pt.ulisboa.tecnico.ai.hems.repository.PowerSourceRepository;
 import pt.ulisboa.tecnico.ai.hems.service.PowerSourceService;
 
 @Service
-@Log
 public class PowerSourceServiceImpl implements PowerSourceService {
 
 	@Autowired
@@ -25,13 +26,24 @@ public class PowerSourceServiceImpl implements PowerSourceService {
 	private JmsTemplate jmsTemplate;
 	
 	@Override
-	public Long addPowerSource(String name, InputOutput io, String code, String icon) {
+	public Long addPowerSource(String name, PowerSourceType type, InputOutput io, Double power, String code) {
 		PowerSource powerSource = new PowerSource();
 		powerSource.setName(name);
+		powerSource.setType(type);
 		powerSource.setIo(io);
 		powerSource.setCode(code);
-		powerSource.setIcon(icon);
+		powerSource.setPower(new BigDecimal(power));
 		powerSource = psRepository.save(powerSource);
+		
+		PowerSourceInfo info = new PowerSourceInfo();
+		info.setName(name);
+		info.setType(type);
+		info.setIo(io);
+		info.setCode(code);
+		info.setPower(power);
+		
+		jmsTemplate.convertAndSend("power_sources", info);
+		
 		return powerSource.getId();
 	}
 	
@@ -52,25 +64,15 @@ public class PowerSourceServiceImpl implements PowerSourceService {
 
 	@Override
 	public void removePowerSource(Long id) {
-		psRepository.deleteById(id);
-	}
+		
+		PowerSource powerSource = psRepository.findById(id).get();
+		psRepository.delete(powerSource);
+		
+		PowerSourceInfo psInfo = new PowerSourceInfo();
+		psInfo.setCode(powerSource.getCode());
+		psInfo.setDelete(true);
+		jmsTemplate.convertAndSend("power_sources", psInfo);
 	
-	@JmsListener(destination = "power_sources", containerFactory = "jmsFactory")
-	public void receivePowerSourceInfo(PowerSourceInfo powerSourceInfo) {
-		
-		PowerSource powerSource = psRepository.findByCode(powerSourceInfo.getCode());
-		
-		if(powerSource == null) {
-			log.warning("New Power Source detected!");
-			log.warning(powerSourceInfo.toString());
-			jmsTemplate.convertAndSend("app_notifications", powerSourceInfo);
-		}
-		
-		powerSource.setPower(powerSourceInfo.getPower());
-		
-		psRepository.save(powerSource);
-		
 	}
-
 
 }

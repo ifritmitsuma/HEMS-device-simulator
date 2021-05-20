@@ -14,10 +14,12 @@ import pt.ulisboa.tecnico.ai.hems.model.Action;
 import pt.ulisboa.tecnico.ai.hems.model.Product;
 import pt.ulisboa.tecnico.ai.hems.model.ProductDesc;
 import pt.ulisboa.tecnico.ai.hems.model.ProductType;
+import pt.ulisboa.tecnico.ai.hems.model.State;
 import pt.ulisboa.tecnico.ai.hems.repository.ActionRepository;
 import pt.ulisboa.tecnico.ai.hems.repository.ProductDescRepository;
 import pt.ulisboa.tecnico.ai.hems.repository.ProductRepository;
 import pt.ulisboa.tecnico.ai.hems.repository.ProductTypeRepository;
+import pt.ulisboa.tecnico.ai.hems.repository.StateRepository;
 import pt.ulisboa.tecnico.ai.hems.service.ProductService;
 
 @Service
@@ -35,6 +37,9 @@ public class ProductServiceImpl implements ProductService {
 	
 	@Autowired
 	private ActionRepository actionRepository;
+	
+	@Autowired
+	private StateRepository stateRepository;
 	
 	@Autowired
 	private JmsTemplate jmsTemplate;
@@ -118,10 +123,10 @@ public class ProductServiceImpl implements ProductService {
 
 	@Override
 	public void sendActionToProduct(Product product, Action action) {
-		jmsTemplate.convertAndSend("products_out", product.createProductAction(action));
+		jmsTemplate.convertAndSend("products", product.createProductAction(action));
 	}
 	
-	@JmsListener(destination = "products", containerFactory = "jmsFactory")
+	@JmsListener(destination = "products_out", containerFactory = "jmsFactory")
 	public void receiveProductNotification(ProductAction productAction) {
 		
 		Product product = prodRepository.findByCode(productAction.getCode());
@@ -138,6 +143,48 @@ public class ProductServiceImpl implements ProductService {
 		product.setState(action.getStateAfter());
 		
 		prodRepository.save(product);
+		
+	}
+
+	@Override
+	public void addProduct(String name, String type, String desc, Double cons, String code, String state) throws Exception {
+		
+		ProductType pType = ptRepository.findByType(type);
+		
+		if(pType == null) {
+			pType = new ProductType();
+			pType.setType(type);
+			pType = ptRepository.save(pType);
+		}
+		
+		ProductDesc pDesc = pdRepository.findByDescription(desc);
+		
+		if(pDesc == null) {
+			pDesc = new ProductDesc();
+			pDesc.setDescription(desc);
+		}
+		
+		pDesc.setConsumption(new BigDecimal(cons));
+		pDesc.setType(pType);
+		pDesc = pdRepository.save(pDesc);
+		
+		State stateData = stateRepository.findByValue(state);
+		
+		if(state == null) {
+			throw new Exception("Invalid State " + stateData);
+		}
+		
+		Product prod = prodRepository.findByCode(code);
+		
+		if(prod == null) {
+			prod = new Product();
+		}
+		
+		prod.setDescription(pDesc);
+		prod.setCode(code);
+		prod.setName(name);
+		prod.setState(stateData);
+		prodRepository.save(prod);
 		
 	}
 

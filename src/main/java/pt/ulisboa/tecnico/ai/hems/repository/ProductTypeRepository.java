@@ -8,4 +8,6 @@ import pt.ulisboa.tecnico.ai.hems.model.ProductType;
 @Repository
 public interface ProductTypeRepository extends JpaRepository<ProductType, Long> {
 
+	ProductType findByType(String type);
+
 }

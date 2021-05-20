@@ -35,4 +35,6 @@ public interface ProductService {
 	
 	public void sendActionToProduct(Product product, Action action);
 
+	public void addProduct(String name, String type, String desc, Double cons, String code, String state) throws Exception;
+
 }
