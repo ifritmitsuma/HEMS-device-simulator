@@ -1,0 +1,144 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head> 
+    <title>HEMS Device Simulator</title> 
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <style>
+    	body {
+    		font-family: arial, sans-serif;
+    	}
+    	
+		table {
+		  border-collapse: collapse;
+		  width:100%;
+		  margin-top: 2em;
+		}
+		
+		td, th {
+		  border: 1px solid #cccccc;
+		  text-align: left;
+		  padding: 8px;
+		}
+		
+		tr:nth-child(even) {
+		  background-color: #eeeeee;
+		}
+	</style>
+</head>
+<body>
+	<div style="display:flex;width:100%;">
+   		<div style="flex:1;"></div>
+   		<div style="flex:3;flex-flow:column;">
+			
+			<h1 style="text-align:center">HEMS Device Simulator</h1>
+	    
+	    	<div>
+		    	<h2>Power Sources</h2>
+		    	<form action='#' th:action="@{/addPowerSource}" th:object="${psForm}" method="post" style="display:flex;flex-flow:row;">
+			   		  <label for="name">Name:</label>
+					  <input type="text" th:field="*{name}">
+					  <label for="type">Type:</label>
+					  <select th:field="*{type}">
+					  	<option th:each="type: ${psTypes}" th:text="${type}" th:value="${type}"/>
+					  </select>
+					  <label for="direction">Direction:</label>
+					  <select th:field="*{direction}">
+					  	<option th:each="direction: ${psDirections}" th:text="${direction}" th:value="${direction}"/>
+					  </select>
+					  <label for="power">Power:</label>
+					  <input type="text" th:field="*{power}">
+					  <label for="code">Code:</label>
+					  <input type="text" th:field="*{code}">
+					  <input type="submit" value="Add Power Source">
+			   	</form>
+			   	<table>
+			   		<thead>
+			   			<tr>
+				   			<th>Name</th>
+				   			<th>Type</th>
+				   			<th>Direction</th>
+				   			<th>Power (kW)</th>
+				   			<th>Code</th>
+				   			<th>Actions</th>
+				   		</tr>
+			   		</thead>
+			   		<tbody>
+				   		<tr th:each="powerSource: ${powerSourceList}">
+					   		<td th:text="${powerSource.name}"/>
+							<td th:text="${powerSource.type}"/>
+							<td th:text="${powerSource.io}"/>
+							<td th:text="${powerSource.power}"/>
+							<td th:text="${powerSource.code}"/>
+					   		<td>
+					   			<form action='#' th:action="@{/removePowerSource}" th:object="${psForm}" method="post">
+							   		  <input hidden="" type="text" th:value="${powerSource.id}" id="id" name="id">
+									  <input type="submit" value="Remove">
+							   	</form>
+							</td>
+					   	</tr>
+					</tbody>
+			   	</table>
+		   	</div>
+		   	<br>
+		   	<br>
+		   	<hr>
+		   	<br>
+		   	<div>
+		   		<h2>Products</h2>
+			   	<form action='#' th:action="@{/addProduct}" th:object="${form}" method="post" style="display:flex;flex-flow:row;">
+			   		  <label for="name">Name:</label>
+					  <input type="text" th:field="*{name}">
+					  <label for="type">Type:</label>
+					  <input type="text" th:field="*{type}">
+					  <label for="description">Description:</label>
+					  <input type="text" th:field="*{description}">
+					  <label for="consumption">Rating:</label>
+					  <input type="text" th:field="*{rating}">
+					  <label for="code">Code:</label>
+					  <input type="text" th:field="*{code}">
+					  <label for="state">State:</label>
+					  <select th:field="*{state}">
+					  	<option th:each="state: ${states}" th:text="${state.label}" th:value="${state.value}"/>
+					  </select>
+					  <input type="submit" value="Add Product">
+			   	</form>
+			   	<table>
+			   		<thead>
+			   			<tr>
+				   			<th>Name</th>
+				   			<th>Type</th>
+				   			<th>Description</th>
+				   			<th>Consumption (W)</th>
+				   			<th>Rating (W)</th>
+				   			<th>Code</th>
+				   			<th>State</th>
+				   			<th>Actions</th>
+				   		</tr>
+			   		</thead>
+			   		<tbody>
+				   		<tr th:each="product: ${productList}">
+					   		<td th:text="${product.name}"/>
+							<td th:text="${product.description.type.type}"/>
+							<td th:text="${product.description.description}"/>
+							<td th:text="${product.consumption}"/>
+							<td th:text="${product.description.rating}"/>
+							<td th:text="${product.code}"/>
+							<td th:text="${product.state.label}"/>
+					   		<td>
+					   			<form action='#' th:action="@{/changeState}" th:object="${form}" method="post">
+							   		  <input hidden="" type="text" th:value="${product.id}" id="id" name="id">
+									  <select th:field="*{action}">
+									  	<option th:each="act: ${actions}" th:text="${act.name}" th:value="${act.code}"/>
+									  </select><br>
+									  <input type="submit" value="Send">
+							   	</form>
+							</td>
+					   	</tr>
+					</tbody>
+			   	</table>
+		   	</div>
+		</div>
+		<div style="flex:1;"></div>
+	</div>
+</body>
+</html>
