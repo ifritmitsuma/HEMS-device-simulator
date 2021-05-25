@@ -8,7 +8,6 @@ import org.springframework.jms.annotation.JmsListener;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
 
-import lombok.extern.java.Log;
 import pt.ulisboa.tecnico.ai.hems.ext.ProductAction;
 import pt.ulisboa.tecnico.ai.hems.model.Action;
 import pt.ulisboa.tecnico.ai.hems.model.Product;
@@ -23,7 +22,6 @@ import pt.ulisboa.tecnico.ai.hems.repository.StateRepository;
 import pt.ulisboa.tecnico.ai.hems.service.ProductService;
 
 @Service
-@Log
 public class ProductServiceImpl implements ProductService {
 
 	@Autowired
@@ -63,12 +61,12 @@ public class ProductServiceImpl implements ProductService {
 	}
 
 	@Override
-	public Long addProductDesc(String description, String icon, ProductType type, Double consumption) {
+	public Long addProductDesc(String description, String icon, ProductType type, Double rating) {
 		ProductDesc desc = new ProductDesc();
 		desc.setDescription(description);
 		desc.setIcon(icon);
 		desc.setType(type);
-		desc.setConsumption(new BigDecimal(consumption));
+		desc.setRating(new BigDecimal(rating));
 		desc = pdRepository.save(desc);
 		return desc.getId();
 	}
@@ -123,6 +121,14 @@ public class ProductServiceImpl implements ProductService {
 
 	@Override
 	public void sendActionToProduct(Product product, Action action) {
+		
+		product = prodRepository.findById(product.getId()).get();
+		
+		product.setState(action.getStateAfter());
+		product.setConsumption(product.getState().getValue().equals("OFF") ? BigDecimal.ZERO : product.getDescription().getRating());
+		
+		prodRepository.save(product);
+		
 		jmsTemplate.convertAndSend("products", product.createProductAction(action));
 	}
 	
@@ -131,23 +137,17 @@ public class ProductServiceImpl implements ProductService {
 		
 		Product product = prodRepository.findByCode(productAction.getCode());
 		
-		if(product == null) {
-			log.warning(String.format("Received message from product not yet configured. ProductCode: %s, Action: %s", productAction.getCode(), productAction.getAction()));
-			log.warning("Redirecting request to configure to apps");
-			jmsTemplate.convertAndSend("app_notifications", productAction.getCode());
-			return;
-		}
-		
 		Action action = actionRepository.findByCode(productAction.getAction());
 		
 		product.setState(action.getStateAfter());
+		product.setConsumption(product.getState().getValue().equals("OFF") ? BigDecimal.ZERO : product.getDescription().getRating());
 		
 		prodRepository.save(product);
 		
 	}
 
 	@Override
-	public void addProduct(String name, String type, String desc, Double cons, String code, String state) throws Exception {
+	public void addProduct(String name, String type, String desc, Double rating, String code, String state) throws Exception {
 		
 		ProductType pType = ptRepository.findByType(type);
 		
@@ -164,7 +164,7 @@ public class ProductServiceImpl implements ProductService {
 			pDesc.setDescription(desc);
 		}
 		
-		pDesc.setConsumption(new BigDecimal(cons));
+		pDesc.setRating(new BigDecimal(rating));
 		pDesc.setType(pType);
 		pDesc = pdRepository.save(pDesc);
 		
@@ -183,6 +183,7 @@ public class ProductServiceImpl implements ProductService {
 		prod.setDescription(pDesc);
 		prod.setCode(code);
 		prod.setName(name);
+		prod.setConsumption(stateData.getValue().equals("OFF") ? BigDecimal.ZERO : new BigDecimal(rating));
 		prod.setState(stateData);
 		prodRepository.save(prod);
 		

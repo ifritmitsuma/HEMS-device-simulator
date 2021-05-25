@@ -1,6 +1,7 @@
 package pt.ulisboa.tecnico.ai.hems.model;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -33,6 +34,8 @@ public class Product implements Serializable {
 	@OneToOne
 	@JoinColumn(name = "DESC_ID")
 	private ProductDesc description;
+	
+	private BigDecimal consumption;
 
 	private String code;
 
@@ -42,7 +45,10 @@ public class Product implements Serializable {
 	
 	public ProductAction createProductAction(Action action) {
 		ProductAction productAction = new ProductAction();
+		productAction.setName(name);
 		productAction.setCode(getCode());
+		productAction.setConsumption(consumption);
+		productAction.setRating(description.getRating());
 		productAction.setAction(action.getCode());
 		return productAction;
 	}

@@ -4,13 +4,11 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jms.annotation.JmsListener;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
 
-import lombok.extern.java.Log;
 import pt.ulisboa.tecnico.ai.hems.enums.InputOutput;
-import pt.ulisboa.tecnico.ai.hems.enums.PowerSourceType;
+import pt.ulisboa.tecnico.ai.hems.enums.PowerSourceTypeEnum;
 import pt.ulisboa.tecnico.ai.hems.ext.PowerSourceInfo;
 import pt.ulisboa.tecnico.ai.hems.model.PowerSource;
 import pt.ulisboa.tecnico.ai.hems.repository.PowerSourceRepository;
@@ -26,7 +24,7 @@ public class PowerSourceServiceImpl implements PowerSourceService {
 	private JmsTemplate jmsTemplate;
 	
 	@Override
-	public Long addPowerSource(String name, PowerSourceType type, InputOutput io, Double power, String code) {
+	public Long addPowerSource(String name, PowerSourceTypeEnum type, InputOutput io, Double power, String code) {
 		PowerSource powerSource = new PowerSource();
 		powerSource.setName(name);
 		powerSource.setType(type);

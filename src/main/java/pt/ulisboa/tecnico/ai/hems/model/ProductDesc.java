@@ -30,7 +30,7 @@ public class ProductDesc implements Serializable {
 	
 	private String description;
 	
-	private BigDecimal consumption;
+	private BigDecimal rating;
 	
 	private String icon;
 	

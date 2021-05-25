@@ -57,7 +57,7 @@
 				   			<th>Name</th>
 				   			<th>Type</th>
 				   			<th>Direction</th>
-				   			<th>Power</th>
+				   			<th>Power (kW)</th>
 				   			<th>Code</th>
 				   			<th>Actions</th>
 				   		</tr>
@@ -92,8 +92,8 @@
 					  <input type="text" th:field="*{type}">
 					  <label for="description">Description:</label>
 					  <input type="text" th:field="*{description}">
-					  <label for="consumption">Consumption:</label>
-					  <input type="text" th:field="*{consumption}">
+					  <label for="consumption">Rating:</label>
+					  <input type="text" th:field="*{rating}">
 					  <label for="code">Code:</label>
 					  <input type="text" th:field="*{code}">
 					  <label for="state">State:</label>
@@ -108,7 +108,8 @@
 				   			<th>Name</th>
 				   			<th>Type</th>
 				   			<th>Description</th>
-				   			<th>Consumption</th>
+				   			<th>Consumption (W)</th>
+				   			<th>Rating (W)</th>
 				   			<th>Code</th>
 				   			<th>State</th>
 				   			<th>Actions</th>
@@ -119,7 +120,8 @@
 					   		<td th:text="${product.name}"/>
 							<td th:text="${product.description.type.type}"/>
 							<td th:text="${product.description.description}"/>
-							<td th:text="${product.description.consumption}"/>
+							<td th:text="${product.consumption}"/>
+							<td th:text="${product.description.rating}"/>
 							<td th:text="${product.code}"/>
 							<td th:text="${product.state.label}"/>
 					   		<td>

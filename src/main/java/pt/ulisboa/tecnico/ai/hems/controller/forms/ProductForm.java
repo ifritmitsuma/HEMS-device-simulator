@@ -15,7 +15,7 @@ public class ProductForm {
 	
 	private String description;
 	
-	private Double consumption;
+	private Double rating;
 	
 	private String code;
 	

@@ -14,7 +14,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import pt.ulisboa.tecnico.ai.hems.enums.InputOutput;
-import pt.ulisboa.tecnico.ai.hems.enums.PowerSourceType;
+import pt.ulisboa.tecnico.ai.hems.enums.PowerSourceTypeEnum;
 
 @Entity
 @Table
@@ -33,7 +33,7 @@ public class PowerSource implements Serializable {
 	private String name;
 	
 	@Enumerated(EnumType.STRING)
-	private PowerSourceType type;
+	private PowerSourceTypeEnum type;
 	
 	@Enumerated(EnumType.STRING)
 	private InputOutput io;

@@ -15,7 +15,7 @@ public interface ProductService {
 	
 	public List<ProductType> getProductTypes();
 
-	public Long addProductDesc(String description, String icon, ProductType type, Double consumption);
+	public Long addProductDesc(String description, String icon, ProductType type, Double rating);
 	
 	public ProductDesc getProductDesc(Long id);
 	
@@ -35,6 +35,6 @@ public interface ProductService {
 	
 	public void sendActionToProduct(Product product, Action action);
 
-	public void addProduct(String name, String type, String desc, Double cons, String code, String state) throws Exception;
+	public void addProduct(String name, String type, String desc, Double rating, String code, String state) throws Exception;
 
 }

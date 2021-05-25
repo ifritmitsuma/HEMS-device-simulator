@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import pt.ulisboa.tecnico.ai.hems.enums.InputOutput;
-import pt.ulisboa.tecnico.ai.hems.enums.PowerSourceType;
+import pt.ulisboa.tecnico.ai.hems.enums.PowerSourceTypeEnum;
 
 @Getter @Setter @NoArgsConstructor
 public class PowerSourceForm {
@@ -13,7 +13,7 @@ public class PowerSourceForm {
 	
 	private String name;
 	
-	private PowerSourceType type;
+	private PowerSourceTypeEnum type;
 	
 	private InputOutput direction;
 	

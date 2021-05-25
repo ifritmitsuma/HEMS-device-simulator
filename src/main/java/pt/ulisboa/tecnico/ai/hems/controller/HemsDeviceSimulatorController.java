@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import pt.ulisboa.tecnico.ai.hems.controller.forms.PowerSourceForm;
 import pt.ulisboa.tecnico.ai.hems.controller.forms.ProductForm;
 import pt.ulisboa.tecnico.ai.hems.enums.InputOutput;
-import pt.ulisboa.tecnico.ai.hems.enums.PowerSourceType;
+import pt.ulisboa.tecnico.ai.hems.enums.PowerSourceTypeEnum;
 import pt.ulisboa.tecnico.ai.hems.model.Action;
 import pt.ulisboa.tecnico.ai.hems.model.Product;
 import pt.ulisboa.tecnico.ai.hems.repository.StateRepository;
@@ -44,7 +44,7 @@ public class HemsDeviceSimulatorController {
 		
 		model.addAttribute("actions", actionService.getActions());
 		
-		model.addAttribute("psTypes", PowerSourceType.values());
+		model.addAttribute("psTypes", PowerSourceTypeEnum.values());
 		
 		model.addAttribute("psDirections", InputOutput.values());
 		
@@ -59,7 +59,7 @@ public class HemsDeviceSimulatorController {
 	@PostMapping("/addProduct")
 	public String addProduct(@ModelAttribute ProductForm form, Model model) throws Exception {
 		
-		prodService.addProduct(form.getName(), form.getType(), form.getDescription(), form.getConsumption(), form.getCode(), form.getState());
+		prodService.addProduct(form.getName(), form.getType(), form.getDescription(), form.getRating(), form.getCode(), form.getState());
 
 		return "redirect:/";
 		
