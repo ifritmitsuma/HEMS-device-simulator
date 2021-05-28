@@ -1,0 +1,12 @@
+{"properties": [
+  {
+    "name": "hems_ds.update_interval",
+    "type": "java.lang.String",
+    "description": "A description for 'hems_ds.update_interval'"
+  },
+  {
+    "name": "hems_ds.consumption_fluctuation",
+    "type": "java.lang.String",
+    "description": "A description for 'hems_ds.consumption_fluctuation'"
+  }
+]}
