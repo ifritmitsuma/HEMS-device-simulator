@@ -207,7 +207,7 @@ public class ProductServiceImpl implements ProductService {
 		for (Product prod : getProducts()) {
 			double max = prod.getDescription().getRating().doubleValue();
 			double min = max - max * consumptionFluctuation;
-			prod.setConsumption(new BigDecimal(min + Math.random() * (max - min)));
+			prod.setConsumption("OFF".equals(prod.getState().getValue()) ? BigDecimal.ZERO : new BigDecimal(min + Math.random() * (max - min)));
 			prodRepository.save(prod);
 			sendActionToProduct(prod, actionRepository.findByStateAfter(prod.getState()));
 		}
